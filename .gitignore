@@ -57,3 +57,7 @@ typings/
 # dotenv environment variables file
 .env
 
+*.xcworkspacedata
+ios/.DS_Store
+*.xcuserstate
+ios/react-native-coreml.xcodeproj/xcuserdata/ray.xcuserdatad/xcschemes/xcschememanagement.plist
