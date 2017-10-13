@@ -17,5 +17,9 @@
     "url": "https://github.com/rhdeck"
   },
   "main": "index.js",
-  "license": "MIT"
+  "license": "MIT",
+  "devDependencies": {
+    "jest": "^21.2.1",
+    "ts-jest": "^21.1.0"
+  }
 }
