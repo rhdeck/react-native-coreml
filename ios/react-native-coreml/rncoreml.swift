@@ -44,7 +44,7 @@ class RNCpreML: NSObject {
             
         }
     }
-    @objc func predictDataWithModel(_ source: [String:Any], modelPath: String,  success:@escaping RCTPromiseResolveBlock, reject:@escaping RCTPromiseRejectBlock) ->Void {
+    @objc func predictFromDataWithModel(_ source: [String:Any], modelPath: String,  success:@escaping RCTPromiseResolveBlock, reject:@escaping RCTPromiseRejectBlock) ->Void {
         do {
             let modelURL = URL(fileURLWithPath: modelPath)
             let thisModel = try MLModel(contentsOf: modelURL);
