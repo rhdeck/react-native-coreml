@@ -1,5 +1,5 @@
 {
-  "name": "react-native-swift-coreml",
+  "name": "react-native-coreml",
   "version": "0.0.1",
   "peerDependencies": {
     "react-native-swift": "^0.3.0"
