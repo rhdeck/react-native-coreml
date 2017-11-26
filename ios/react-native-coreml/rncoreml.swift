@@ -9,10 +9,9 @@ class RNCpreML: NSObject {
             success(tempURL.path);
             return;
         } catch {
-            reject(nil, nil, nil);
+            reject(nil, nil, error);
             return;
         }
-        reject(nil, nil, nil);
     }
     @objc func classifyImageWithModel(_ source: String, modelPath: String, success:@escaping RCTPromiseResolveBlock, reject:@escaping RCTPromiseRejectBlock) ->Void {
         do {
@@ -40,7 +39,7 @@ class RNCpreML: NSObject {
             request.imageCropAndScaleOption = VNImageCropAndScaleOption.centerCrop
             try handler.perform([request]);
         } catch {
-            reject(nil, nil, nil);
+            reject(nil, nil, error);
             
         }
     }
@@ -96,7 +95,7 @@ class RNCpreML: NSObject {
             success(out);
             return;
         } catch {
-            reject(nil, nil, nil);
+            reject(nil, nil, error);
         }
     }
 }
