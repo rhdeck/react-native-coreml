@@ -1,8 +1,8 @@
 {
   "name": "react-native-coreml",
-  "version": "0.0.1",
+  "version": "1.0.1",
   "peerDependencies": {
-    "react-native-swift": "^0.3.0"
+    "react-native-swift": "^1.0.0"
   },
   "repository": {
     "type": "git",
