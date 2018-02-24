@@ -2,15 +2,15 @@ import Foundation
 import Vision
 @objc (RNCoreML)
 class RNCpreML: NSObject {
-    @objc func compileModel(_ source: String, success:RCTPromiseResolveBlock, reject:RCTPromiseRejectBlock) ->Void {
-        let url = URL(fileURLWithPath: source)
-        do {
-            let tempURL:URL = try MLModel.compileModel(at:url)
-            success(tempURL.path);
-            return;
-        } catch {
-            reject(nil, nil, error);
-            return;
+    @objc func compileModel(_ source: String, success:@escaping RCTPromiseResolveBlock, reject:@escaping RCTPromiseRejectBlock) ->Void {
+        DispatchQueue(label: "RNCoreML").async() {
+            let url = URL(fileURLWithPath: source)
+            do {
+                let tempURL:URL = try MLModel.compileModel(at:url)
+                success(tempURL.path);
+            } catch {
+                reject(nil, nil, error);
+            }
         }
     }
     @objc func classifyImageWithModel(_ source: String, modelPath: String, success:@escaping RCTPromiseResolveBlock, reject:@escaping RCTPromiseRejectBlock) ->Void {
