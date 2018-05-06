@@ -7,8 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		719BBC3B1F8957740028B47D /* react_native_coreml.m in Sources */ = {isa = PBXBuildFile; fileRef = 719BBC3A1F8957740028B47D /* react_native_coreml.m */; };
 		719BBC441F8957CC0028B47D /* rncoreml.swift in Sources */ = {isa = PBXBuildFile; fileRef = 719BBC431F8957CC0028B47D /* rncoreml.swift */; };
+		C3B06CF9B13B4C6F81AFD58D /* rn-swift-bridge.m in Sources */ = {isa = PBXBuildFile; fileRef = 6C696DC59D8E423B8E73FADB /* rn-swift-bridge.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -24,8 +24,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		6C696DC59D8E423B8E73FADB /* rn-swift-bridge.m */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.c.objc; path = "rn-swift-bridge.m"; sourceTree = "<group>"; };
 		719BBC361F8957740028B47D /* libreact-native-coreml.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libreact-native-coreml.a"; sourceTree = BUILT_PRODUCTS_DIR; };
-		719BBC3A1F8957740028B47D /* react_native_coreml.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = react_native_coreml.m; sourceTree = "<group>"; };
 		719BBC421F8957CC0028B47D /* react-native-coreml-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "react-native-coreml-Bridging-Header.h"; sourceTree = "<group>"; };
 		719BBC431F8957CC0028B47D /* rncoreml.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = rncoreml.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -47,6 +47,7 @@
 				719BBC381F8957740028B47D /* react-native-coreml */,
 				719BBC371F8957740028B47D /* Products */,
 				719BBC421F8957CC0028B47D /* react-native-coreml-Bridging-Header.h */,
+				71F4EF07209F2CFC00997296 /* Recovered References */,
 			);
 			sourceTree = "<group>";
 		};
@@ -62,9 +63,16 @@
 			isa = PBXGroup;
 			children = (
 				719BBC431F8957CC0028B47D /* rncoreml.swift */,
-				719BBC3A1F8957740028B47D /* react_native_coreml.m */,
 			);
 			path = "react-native-coreml";
+			sourceTree = "<group>";
+		};
+		71F4EF07209F2CFC00997296 /* Recovered References */ = {
+			isa = PBXGroup;
+			children = (
+				6C696DC59D8E423B8E73FADB /* rn-swift-bridge.m */,
+			);
+			name = "Recovered References";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -93,12 +101,12 @@
 		719BBC2E1F8957740028B47D /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0910;
+				LastUpgradeCheck = 910;
 				ORGANIZATIONNAME = "Ray Deck";
 				TargetAttributes = {
 					719BBC351F8957740028B47D = {
 						CreatedOnToolsVersion = 9.1;
-						LastSwiftMigration = 0910;
+						LastSwiftMigration = 910;
 						ProvisioningStyle = Automatic;
 					};
 				};
@@ -125,8 +133,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				719BBC3B1F8957740028B47D /* react_native_coreml.m in Sources */,
 				719BBC441F8957CC0028B47D /* rncoreml.swift in Sources */,
+				C3B06CF9B13B4C6F81AFD58D /* rn-swift-bridge.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
