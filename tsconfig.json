@@ -1,8 +1,9 @@
 {
-    "compilerOptions": {
-        "target":"es6",
-        "module":"es6",
-        "sourceMap":true,
-        "moduleResolution": "node"
-    }
+  "compilerOptions": {
+    "target": "es6",
+    "module": "es6",
+    "sourceMap": true,
+    "moduleResolution": "node",
+    "skipLibCheck": true
+  }
 }
