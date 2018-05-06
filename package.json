@@ -2,7 +2,12 @@
   "name": "react-native-coreml",
   "version": "1.0.1",
   "peerDependencies": {
-    "react-native-swift": "^1.0.0"
+    "react-native-swift": "^1.2.0"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "bridge": "react-native-swift-bridge",
+    "watch": "react-native-swift-bridge --watch"
   },
   "repository": {
     "type": "git",
@@ -16,8 +21,6 @@
   "main": "index.js",
   "license": "MIT",
   "devDependencies": {
-    "jest": "^21.2.1",
-    "ts-jest": "^21.1.0",
-    "react-native": "^0.49.0"
+    "react-native-swift-bridge": "^2.1.0"
   }
 }
