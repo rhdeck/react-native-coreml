@@ -1,7 +1,46 @@
 import Foundation
 import Vision
 @objc (RNCoreML)
-class RNCpreML: NSObject {
+public class RNCoreML: NSObject {
+    //MARK: Class Members - public for other Swift code
+    public static var instance:RNCoreML?
+    public class func getMultiArray(_ key: String) -> MLMultiArray? {
+        return instance?.multiArrays[key]
+    }
+    public class func removeMultiArray(_ key: String) {
+        guard let i = RNCoreML.instance else { return }
+        i.multiArrays.removeValue(forKey: key)
+    }
+    //MARK: Private Instance Members
+    var multiArrays:[String:MLMultiArray] = [:]
+    var models:[String:MLModel] = [:]
+    override init() {
+        super.init()
+        RNCoreML.instance = self
+    }
+    func makeMLDictionary(_ source: [String:Any]) -> MLDictionaryFeatureProvider? {
+        var newSource:[String:Any] = [:]
+        source.forEach() { k, v in
+            if let m = multiArrays[k] {
+                newSource[k] = m
+            } else {
+                newSource[k] = v
+            }
+        }
+        let out = try? MLDictionaryFeatureProvider(dictionary: newSource);
+        return out
+        
+    }
+    func getModel(_ modelPath: String) -> MLModel? {
+        if let m = models[modelPath] { return m }
+        let modelURL = URL(fileURLWithPath: modelPath)
+        if let m = try? MLModel(contentsOf: modelURL) {
+            models[modelPath] = m
+            return m
+        }
+        return nil
+    }
+    //MARK: RN Methods
     @objc func compileModel(_ source: String, success:@escaping RCTPromiseResolveBlock, reject:@escaping RCTPromiseRejectBlock) ->Void {
         DispatchQueue(label: "RNCoreML").async() {
             let url = URL(fileURLWithPath: source)
@@ -40,14 +79,14 @@ class RNCpreML: NSObject {
             try handler.perform([request]);
         } catch {
             reject(nil, nil, error);
-            
         }
     }
     @objc func predictFromDataWithModel(_ source: [String:Any], modelPath: String,  success:@escaping RCTPromiseResolveBlock, reject:@escaping RCTPromiseRejectBlock) ->Void {
         do {
-            let modelURL = URL(fileURLWithPath: modelPath)
-            let thisModel = try MLModel(contentsOf: modelURL);
-            let dp = try MLDictionaryFeatureProvider(dictionary: source);
+            guard
+                let dp = makeMLDictionary(source),
+                let thisModel = getModel(modelPath)
+                else { reject("no_model", "Model or source data incorrect", nil) ; return }
             let prediction:MLFeatureProvider = try thisModel.prediction(from: dp)
             var out:[String:[String:Any]] = [:];
             for s:String in prediction.featureNames {
@@ -70,20 +109,22 @@ class RNCpreML: NSObject {
                         o = v.dictionaryValue
                     case MLFeatureType.image:
                         if let cvib:CVImageBuffer = v.imageBufferValue {
-                            //yeah I don't know what to do with this
+                            let tempURL = URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent(UUID().uuidString).appendingPathExtension("jpg")
+                            let ci = CIImage(cvImageBuffer: cvib)
+                            let ui = UIImage(ciImage: ci)
+                            guard let _ = try? UIImageJPEGRepresentation(ui, 1.0)?.write(to: tempURL) else { continue }
+                            o = tempURL.absoluteString
                             ts = "image";
-                            // o = ???
                         }
                     case MLFeatureType.invalid:
                         print("This was an invalid answer");
                     case MLFeatureType.multiArray:
-                        //don't know what to do with this either
                         if let m = v.multiArrayValue {
                             ts = "multiarray"
-                            o = m
+                            let k = UUID().uuidString
+                            multiArrays[k] = m
+                            o = k
                         }
-                    default:
-                        print("I should have handled all the cases, so this should not happen.")
                     }
                     if(ts.count > 0) {
                         if let obang = o {
