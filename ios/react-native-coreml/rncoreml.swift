@@ -158,7 +158,7 @@ public class RNCoreML: NSObject {
                     }
                     if(ts.count > 0) {
                         if let obang = o {
-                            out[s] = ["type":ts, "value":obang];
+                            out[s] = ["name": s, "type":ts, "value":obang];
                         }
                     }
                 }
