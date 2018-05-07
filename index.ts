@@ -9,6 +9,7 @@ class RNCoreMLClass {
     data: object,
     modelpath: string
   ) => Promise<object>;
+  saveMultiArray: (key: string, savePath: string) => Promise<string>;
 }
 const RNCoreML: RNCoreMLClass = NativeModules.RNCoreML;
 const compileModel = async sourcepath => {
@@ -35,10 +36,16 @@ const predict = async (dictionary, modelPath) => {
   const obj = await RNCoreML.predictFromDataWithModel(dictionary, modelPath);
   return obj;
 };
+const saveMultiArray = async (key, savePath) => {
+  if (!savePath) savePath = null;
+  const newPath = await RNCoreML.saveMultiArray(key, savePath);
+  return newPath;
+};
 export default {
-  compileModel: compileModel,
-  classifyImage: classifyImage,
-  classifyTopFive: classifyTopFive,
-  classifyTopValue: classifyTopValue,
-  predict: predict
+  compileModel,
+  classifyImage,
+  classifyTopFive,
+  classifyTopValue,
+  predict,
+  saveMultiArray
 };
