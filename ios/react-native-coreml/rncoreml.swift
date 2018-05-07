@@ -52,7 +52,7 @@ public class RNCoreML: NSObject {
         return saveMultiArray(multiArray: multiArray, url: url);
     }
     
-    func saveMultiArray(multiArray: MLMultiArray, url: URL)  -> Bool {
+    func saveMultiArray(multiArray: MLMultiArray, url: URL) -> Bool {
         var size:Int = 1;
         var unitSize:Int
         switch multiArray.dataType {
