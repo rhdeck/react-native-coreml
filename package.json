@@ -21,6 +21,8 @@
   "main": "index.js",
   "license": "MIT",
   "devDependencies": {
+    "@types/react-native": "^0.55.12",
+    "react-native": "*",
     "react-native-swift-bridge": "^2.1.0"
   }
 }
