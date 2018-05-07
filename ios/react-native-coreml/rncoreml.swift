@@ -1,6 +1,6 @@
 import Foundation
 import Vision
-@objc (RNCoreML)
+@objc(RNCoreML)
 public class RNCoreML: NSObject {
     //MARK: Class Members - public for other Swift code
     public static var instance:RNCoreML?
@@ -40,6 +40,37 @@ public class RNCoreML: NSObject {
         }
         return nil
     }
+    func saveMultiArray(_ key: String) {
+        //Let's build out a
+    }
+    func saveMultiArray(_ key: String, path: String) ->  Bool {
+        guard let ma = multiArrays[key] else { return false }
+        return saveMultiArray(multiArray: ma, path: path);
+    }
+    func saveMultiArray(multiArray: MLMultiArray, path:String) -> Bool {
+        let url = URL(fileURLWithPath: path)
+        return saveMultiArray(multiArray: multiArray, url: url);
+    }
+    
+    func saveMultiArray(multiArray: MLMultiArray, url: URL)  -> Bool {
+        var size:Int = 1;
+        var unitSize:Int
+        switch multiArray.dataType {
+        case .double: unitSize = 8;
+        case .float32: unitSize = 4;
+        case .int32: unitSize = 4;
+        }
+        for  dim in 1...multiArray.shape.count {
+            size = size * (multiArray.shape[dim] as! Int) * (multiArray.strides[dim] as! Int) * unitSize
+        }
+        let d = NSData(bytes: multiArray.dataPointer, length: size)
+        do {
+            try d.write(to: url, options: .atomic)
+            return true
+        } catch  {
+            return false
+        }
+    }
     //MARK: RN Methods
     @objc func compileModel(_ source: String, success:@escaping RCTPromiseResolveBlock, reject:@escaping RCTPromiseRejectBlock) ->Void {
         DispatchQueue(label: "RNCoreML").async() {
@@ -53,10 +84,9 @@ public class RNCoreML: NSObject {
         }
     }
     @objc func classifyImageWithModel(_ source: String, modelPath: String, success:@escaping RCTPromiseResolveBlock, reject:@escaping RCTPromiseRejectBlock) ->Void {
+        guard let thisModel = getModel(modelPath) else { reject("no_model", "Could not load model with path" +  modelPath, nil); return }
         do {
             let imageURL = URL(fileURLWithPath: source)
-            let modelURL = URL(fileURLWithPath: modelPath)
-            let thisModel = try MLModel(contentsOf: modelURL);
             let vModel = try VNCoreMLModel(for: thisModel);
             let image = CIImage(contentsOf: imageURL);
             let handler = VNImageRequestHandler(ciImage: image!);
@@ -78,7 +108,7 @@ public class RNCoreML: NSObject {
             request.imageCropAndScaleOption = VNImageCropAndScaleOption.centerCrop
             try handler.perform([request]);
         } catch {
-            reject(nil, nil, error);
+            reject("model_error", "Error from model: " + error.localizedDescription, error);
         }
     }
     @objc func predictFromDataWithModel(_ source: [String:Any], modelPath: String,  success:@escaping RCTPromiseResolveBlock, reject:@escaping RCTPromiseRejectBlock) ->Void {
@@ -137,6 +167,26 @@ public class RNCoreML: NSObject {
             return;
         } catch {
             reject(nil, nil, error);
+        }
+    }
+    @objc func saveMultiArray(_ key: String, path: String?, resolve: RCTPromiseResolveBlock, reject: RCTPromiseRejectBlock ) {
+        guard let ma = multiArrays[key] else { reject("bad_key", "No multiarray saved with this key", nil); return }
+        if let p = path {
+            if saveMultiArray(multiArray: ma, path: p) {
+                resolve(path)
+            } else {
+                reject("no_save", "Save failed", nil)
+            }
+        } else {
+            //make temp file
+            var t:String
+            switch ma.dataType {
+                case .double: t = "double";
+                case .float32: t = "float32";
+                case .int32: t = "int32";
+            }
+            let p = URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent(UUID().uuidString).appendingPathExtension(t)
+            saveMultiArray(key, path: p.path, resolve: resolve, reject: reject)
         }
     }
 }
