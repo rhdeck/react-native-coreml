@@ -40,36 +40,33 @@ public class RNCoreML: NSObject {
         }
         return nil
     }
-    func saveMultiArray(_ key: String) {
-        //Let's build out a
-    }
     func saveMultiArray(_ key: String, path: String) ->  Bool {
         guard let ma = multiArrays[key] else { return false }
-        return saveMultiArray(multiArray: ma, path: path);
+        return react_native_coreml.saveMultiArray(multiArray: ma, path: path);
     }
-    func saveMultiArray(multiArray: MLMultiArray, path:String) -> Bool {
-        let url = URL(fileURLWithPath: path)
-        return saveMultiArray(multiArray: multiArray, url: url);
+    func saveMultiArray(_ key: String, url: URL) -> Bool {
+        guard let ma = multiArrays[key] else { return false }
+        return react_native_coreml.saveMultiArray(multiArray: ma, url: url);
     }
-    
-    func saveMultiArray(multiArray: MLMultiArray, url: URL) -> Bool {
-        var size:Int = 1;
-        var unitSize:Int
+    func makeMultiArrayExtension(_ key: String) -> String? {
+        guard let ma = multiArrays[key] else { return nil }
+        return makeMultiArrayExtension(multiArray: ma)
+    }
+    func makeMultiArrayExtension(multiArray: MLMultiArray) -> String {
+        var t:String
         switch multiArray.dataType {
-        case .double: unitSize = 8;
-        case .float32: unitSize = 4;
-        case .int32: unitSize = 4;
+        case .double: t = "double";
+        case .float32: t = "float32";
+        case .int32: t = "int32";
         }
-        for  dim in 1...multiArray.shape.count {
-            size = size * (multiArray.shape[dim] as! Int) * (multiArray.strides[dim] as! Int) * unitSize
+        for n in multiArray.shape {
+            t = t.appending(".").appending(n.stringValue)
         }
-        let d = NSData(bytes: multiArray.dataPointer, length: size)
-        do {
-            try d.write(to: url, options: .atomic)
-            return true
-        } catch  {
-            return false
+        t = t.appending(".").appending("s")
+        for n in multiArray.strides {
+            t = t.appending(".").appending(n.stringValue)
         }
+        return t
     }
     //MARK: RN Methods
     @objc func compileModel(_ source: String, success:@escaping RCTPromiseResolveBlock, reject:@escaping RCTPromiseRejectBlock) ->Void {
@@ -147,19 +144,30 @@ public class RNCoreML: NSObject {
                             ts = "image";
                         }
                     case MLFeatureType.invalid:
+                        ts = "invalid"
+                        o = nil
                         print("This was an invalid answer");
                     case MLFeatureType.multiArray:
                         if let m = v.multiArrayValue {
                             ts = "multiarray"
                             let k = UUID().uuidString
                             multiArrays[k] = m
-                            o = k
+                            var mtype:String = ""
+                            switch m.dataType {
+                            case .double: mtype = "double";
+                            case .int32: mtype = "int32";
+                            case .float32: mtype = "float32"
+                            }
+                            o = [
+                                "key": k,
+                                "type": mtype,
+                                "strides": m.strides,
+                                "shape": m.shape
+                            ]
                         }
                     }
                     if(ts.count > 0) {
-                        if let obang = o {
-                            out[s] = ["name": s, "type":ts, "value":obang];
-                        }
+                        out[s] = ["name": s, "type":ts, "value":o];
                     }
                 }
             }
@@ -172,21 +180,40 @@ public class RNCoreML: NSObject {
     @objc func saveMultiArray(_ key: String, path: String?, resolve: RCTPromiseResolveBlock, reject: RCTPromiseRejectBlock ) {
         guard let ma = multiArrays[key] else { reject("bad_key", "No multiarray saved with this key", nil); return }
         if let p = path {
-            if saveMultiArray(multiArray: ma, path: p) {
+            if react_native_coreml.saveMultiArray(multiArray: ma, path: p) {
                 resolve(path)
             } else {
                 reject("no_save", "Save failed", nil)
             }
         } else {
             //make temp file
-            var t:String
-            switch ma.dataType {
-                case .double: t = "double";
-                case .float32: t = "float32";
-                case .int32: t = "int32";
-            }
-            let p = URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent(UUID().uuidString).appendingPathExtension(t)
-            saveMultiArray(key, path: p.path, resolve: resolve, reject: reject)
+            let p = URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent(UUID().uuidString).appendingPathExtension(self.makeMultiArrayExtension(multiArray: ma))
+            self.saveMultiArray(key, path: p.path, resolve: resolve, reject: reject)
         }
+    }
+}
+
+func saveMultiArray(multiArray: MLMultiArray, path:String) -> Bool {
+    let url = URL(fileURLWithPath: path)
+    return saveMultiArray(multiArray: multiArray, url: url);
+}
+
+func saveMultiArray(multiArray: MLMultiArray, url: URL) -> Bool {
+    var size:Int = 1;
+    var unitSize:Int
+    switch multiArray.dataType {
+    case .double: unitSize = 8;
+    case .float32: unitSize = 4;
+    case .int32: unitSize = 4;
+    }
+    for  dim in 1...multiArray.shape.count {
+        size = size * (multiArray.shape[dim] as! Int) * (multiArray.strides[dim] as! Int) * unitSize
+    }
+    let d = NSData(bytes: multiArray.dataPointer, length: size)
+    do {
+        try d.write(to: url, options: .atomic)
+        return true
+    } catch  {
+        return false
     }
 }
