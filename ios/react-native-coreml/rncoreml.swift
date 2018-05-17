@@ -18,6 +18,9 @@ public class RNCoreML: NSObject {
         super.init()
         RNCoreML.instance = self
     }
+    class func requiresMainQueueSetup() -> Bool {
+        return false
+    }
     func makeMLDictionary(_ source: [String:Any]) -> MLDictionaryFeatureProvider? {
         var newSource:[String:Any] = [:]
         source.forEach() { k, v in
