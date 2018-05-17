@@ -48,4 +48,5 @@ export default {
     predict,
     saveMultiArray
 };
+export { compileModel, classifyImage, classifyTopFive, classifyTopValue, predict, saveMultiArray };
 //# sourceMappingURL=index.js.map
