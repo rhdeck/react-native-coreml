@@ -23,7 +23,7 @@ Exported from `react-native-coreml`. All imperative functions that return a prom
 
 ## compileModel(pathToMLModel)
 
-Takes a downloaded .mlmodel file and converts it to a .mlmodelc directory. The latter is always in your temporary files folder, so if you want to put it somewhere else, recommend using `react-native-fs`.
+Takes a downloaded .mlmodel file and converts it to a .mlmodelc directory. The latter is always in your temporary files folder, so if you want to then put it somewhere else, recommend using `react-native-fs`.
 
 ## classifyImage(pathToImage, pathToMLModelC)
 
