@@ -168,6 +168,22 @@ public class RNCoreML: NSObject {
                                 "shape": m.shape
                             ]
                         }
+                    case .sequence:
+                        ts = "sequence"
+                        if #available(iOS 12.0, *) {
+                            if let s = v.sequenceValue {
+                                switch s.type {
+                                case .string:
+                                    o = s.stringValues
+                                case .int64:
+                                    o = s.int64Values
+                                default:
+                                    o = nil
+                                }
+                            }
+                        } else {
+                            // Fallback on earlier versions
+                        }
                     }
                     if(ts.count > 0) {
                         out[s] = ["name": s, "type":ts, "value":o];
