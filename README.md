@@ -11,8 +11,8 @@ import { compileModel, classifyTopValue } from "react-native-coreml";
     ...download file with RNFS
     const { jobid, promise } = RNFS.DownloadFile(...)
     await promise
-    const modelPath = await RNCoreML.compileModel(MLModelPath)
-    const { label, confidence } = await RNCoreML.classifyTopValue(pathToImage, modelPath)
+    const modelPath = await compileModel(MLModelPath)
+    const { label, confidence } = await classifyTopValue(pathToImage, modelPath)
     console.log("The image is a " + label + ". I think. ")
 })();
 ```
