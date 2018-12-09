@@ -62,3 +62,4 @@ ios/.DS_Store
 *.xcuserstate
 ios/react-native-coreml.xcodeproj/xcuserdata/ray.xcuserdatad/xcschemes/xcschememanagement.plist
 yarn.lock
+.watchmanconfig
