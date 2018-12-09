@@ -19,7 +19,7 @@ public class RNCoreML: NSObject {
         RNCoreML.instance = self
     }
     class func requiresMainQueueSetup() -> Bool {
-        return false
+        return true
     }
     func makeMLDictionary(_ source: [String:Any]) -> MLDictionaryFeatureProvider? {
         var newSource:[String:Any] = [:]
@@ -234,5 +234,10 @@ func saveMultiArray(multiArray: MLMultiArray, url: URL) -> Bool {
         return true
     } catch  {
         return false
+    }
+    //MARK: Constants
+    //@RNSConstants bundlePath bundleURL
+     override func constantsToExport() -> [AnyHashable : Any]! {
+        return ["bundlePath": Bundle.main.bundlePath, "bundleURL": Bundle.main.bundleURL.absoluteString]
     }
 }
